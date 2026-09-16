@@ -38,29 +38,31 @@ async function createTask(userId, data) {
 async function getTasks(userId, filters = {}) {
   let query = db.collection(TASKS_COLLECTION).where('userId', '==', userId);
 
-  if (filters.status) {
-    query = query.where('status', '==', filters.status);
-  }
-  if (filters.priority) {
-    query = query.where('priority', '==', filters.priority);
-  }
-
-  query = query.orderBy('createdAt', 'desc');
-
   const snapshot = await query.get();
-  const tasks = [];
+  let tasks = [];
 
   snapshot.forEach((doc) => {
     tasks.push({ id: doc.id, ...doc.data() });
   });
 
-  // Client-side search filter (Firestore doesn't support full-text search)
+  // Filter in memory to avoid requiring Firestore composite indexes
+  if (filters.status) {
+    tasks = tasks.filter((t) => t.status === filters.status);
+  }
+  if (filters.priority) {
+    tasks = tasks.filter((t) => t.priority === filters.priority);
+  }
+
+  // Sort by createdAt desc in memory
+  tasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+  // Search filter
   if (filters.search) {
     const searchLower = filters.search.toLowerCase();
-    return tasks.filter(
+    tasks = tasks.filter(
       (t) =>
-        t.title.toLowerCase().includes(searchLower) ||
-        t.description.toLowerCase().includes(searchLower)
+        (t.title && t.title.toLowerCase().includes(searchLower)) ||
+        (t.description && t.description.toLowerCase().includes(searchLower))
     );
   }
 

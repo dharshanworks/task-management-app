@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -42,6 +43,17 @@ app.get('/api/health', (_req, res) => {
 // --------------- Routes ---------------
 app.use('/api/tasks', taskRoutes);
 app.use('/api/ai', aiRoutes);
+
+// --------------- Static Files (Production) ---------------
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendPath));
+
+  // SPA fallback — serve index.html for non-API routes
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
 
 // --------------- 404 Handler ---------------
 app.use((_req, res) => {
