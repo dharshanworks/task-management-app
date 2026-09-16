@@ -15,9 +15,11 @@ function initializeFirebase() {
   try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
       // Local development — use service account file
-      const serviceAccount = require(
-        require('path').resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)
-      );
+      const path = require('path');
+      const resolvedPath = path.isAbsolute(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)
+        ? process.env.FIREBASE_SERVICE_ACCOUNT_PATH
+        : path.join(__dirname, '..', '..', process.env.FIREBASE_SERVICE_ACCOUNT_PATH);
+      const serviceAccount = require(resolvedPath);
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       });

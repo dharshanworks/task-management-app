@@ -20,7 +20,8 @@ function getGenAI() {
 async function improveTask(title, description = '') {
   try {
     const ai = getGenAI();
-    const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const modelName = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+    const model = ai.getGenerativeModel({ model: modelName });
 
     const prompt = `You are a productivity expert. Analyze the following task and provide improvement suggestions.
 
