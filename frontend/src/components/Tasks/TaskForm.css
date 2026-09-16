@@ -1,0 +1,21 @@
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form-input-error {
+  border-color: var(--color-danger) !important;
+}
+
+.form-char-count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  align-self: flex-end;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,41 @@
+.task-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.filter-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.filter-search-icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.filter-search-input {
+  padding-left: var(--space-10) !important;
+}
+
+.filter-select {
+  min-width: 140px;
+}
+
+@media (max-width: 768px) {
+  .task-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-search {
+    max-width: 100%;
+  }
+}

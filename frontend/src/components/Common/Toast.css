@@ -1,0 +1,9 @@
+.toast-icon {
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+}
