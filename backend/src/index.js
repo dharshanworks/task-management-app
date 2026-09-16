@@ -12,7 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // --------------- Security Middleware ---------------
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
@@ -21,8 +26,12 @@ app.use(cors({
     if (process.env.NODE_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin)) {
       return callback(null, true);
     }
-    // Production: check against FRONTEND_URL
-    if (origin === process.env.FRONTEND_URL) {
+    // If FRONTEND_URL is not set in production or equals origin, allow
+    if (!process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    const allowed = process.env.FRONTEND_URL.split(',').map((u) => u.trim());
+    if (allowed.includes(origin)) {
       return callback(null, true);
     }
     callback(new Error('Not allowed by CORS'));

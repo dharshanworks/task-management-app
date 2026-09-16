@@ -11,9 +11,19 @@ function initializeFirebase() {
   if (admin.apps.length > 0) {
     return admin.apps[0];
   }
-
   try {
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+      // Inline JSON service account (Railway / Cloud deployment)
+      let raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY.trim();
+      // Handle optional base64 encoding if user encoded it
+      if (!raw.startsWith('{')) {
+        raw = Buffer.from(raw, 'base64').toString('utf8');
+      }
+      const serviceAccount = JSON.parse(raw);
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    } else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
       // Local development — use service account file
       const path = require('path');
       const resolvedPath = path.isAbsolute(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)
