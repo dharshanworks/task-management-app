@@ -11,6 +11,10 @@ const aiRoutes = require('./routes/aiRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust reverse proxy (Railway, Heroku, etc.) so X-Forwarded-For is properly handled
+// and express-rate-limit identifies client IP correctly
+app.set('trust proxy', 1);
+
 // --------------- Security Middleware ---------------
 app.use(
   helmet({
@@ -58,6 +62,7 @@ const limiter = rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: { error: 'Too many requests, please try again later.' },
 });
 app.use(limiter);
