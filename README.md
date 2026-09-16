@@ -149,6 +149,7 @@ cd backend && npm test
 | [Decisions](docs/decisions.md) | Technical decision records (ADRs) |
 | [Usability](docs/usability.md) | UX, accessibility & responsive design |
 | [AI Usage](docs/ai-usage.md) | AI in the product & development process |
+| [Deployment Guide](docs/deployment.md) | Railway cloud deployment instructions |
 
 ## 📜 License
 
