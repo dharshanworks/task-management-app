@@ -10,6 +10,27 @@ import { auth, googleProvider } from '../config/firebase';
 
 const AuthContext = createContext(null);
 
+function formatAuthError(err) {
+  if (!err) return null;
+  const code = err.code || '';
+  if (code === 'auth/unauthorized-domain') {
+    return 'Domain unauthorized. Please add this domain to Firebase Console → Authentication → Settings → Authorized domains.';
+  }
+  if (code === 'auth/popup-closed-by-user') {
+    return 'Google sign-in window was closed. Please click the button below to try again.';
+  }
+  if (code === 'auth/cancelled-popup-request') {
+    return 'A sign-in request is already in progress. Please wait.';
+  }
+  if (code === 'auth/popup-blocked') {
+    return 'Popup was blocked by your browser. Please allow popups or use the Redirect option below.';
+  }
+  if (code === 'auth/network-request-failed') {
+    return 'Network connection error. Please check your internet connection.';
+  }
+  return err.message || 'Authentication failed. Please try again.';
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,9 +38,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // Check for result if user completed a redirect sign-in
-    getRedirectResult(auth).catch((err) => {
-      console.error('Redirect sign-in error:', err);
-    });
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setUser(result.user);
+        }
+      })
+      .catch((err) => {
+        console.error('Redirect sign-in error:', err);
+        setError(formatAuthError(err));
+      });
 
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -34,18 +62,29 @@ export function AuthProvider({ children }) {
       await signInWithPopup(auth, googleProvider);
     } catch (err) {
       console.error('Sign-in error:', err);
-      // If popup was blocked or closed, gracefully fallback to redirect
-      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
-        console.log('Popup sign-in interrupted, falling back to redirect...');
+      // If popup was blocked by browser, automatically try redirect fallback
+      if (err.code === 'auth/popup-blocked') {
+        console.log('Popup blocked by browser, falling back to redirect...');
         try {
           await signInWithRedirect(auth, googleProvider);
           return;
         } catch (redirectErr) {
-          setError(redirectErr.message);
+          setError(formatAuthError(redirectErr));
           throw redirectErr;
         }
       }
-      setError(err.message);
+      setError(formatAuthError(err));
+      throw err;
+    }
+  };
+
+  const signInWithGoogleRedirect = async () => {
+    try {
+      setError(null);
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err) {
+      console.error('Redirect sign-in error:', err);
+      setError(formatAuthError(err));
       throw err;
     }
   };
@@ -74,6 +113,7 @@ export function AuthProvider({ children }) {
     loading,
     error,
     signInWithGoogle,
+    signInWithGoogleRedirect,
     logout,
     getIdToken,
   };

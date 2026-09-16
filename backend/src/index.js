@@ -16,9 +16,21 @@ app.use(
   helmet({
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: false,
+    // Explicitly set to 'unsafe-none' instead of false.
+    // Setting false only tells helmet to skip the header, but Railway's
+    // reverse proxy (railway-hikari) injects COOP: same-origin anyway,
+    // which breaks Firebase popup authentication.
+    crossOriginOpenerPolicy: { policy: 'unsafe-none' },
   })
 );
+
+// Force-override COOP header AFTER helmet — ensures Railway's reverse proxy
+// cannot override it. Firebase Google Sign-In popup REQUIRES the opener
+// window reference to communicate auth results back to the app.
+app.use((_req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  next();
+});
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
