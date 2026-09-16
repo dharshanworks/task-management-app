@@ -59,12 +59,26 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     try {
       setError(null);
-      await signInWithPopup(auth, googleProvider);
+
+      // In production, Railway's edge proxy injects COOP: same-origin which
+      // breaks signInWithPopup (the popup can't communicate back to the opener).
+      // Use signInWithRedirect instead — it navigates the full page to Google
+      // and redirects back, completely avoiding the cross-window COOP issue.
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
+
+      if (isLocalhost) {
+        // Popup works fine on localhost (no COOP proxy interference)
+        await signInWithPopup(auth, googleProvider);
+      } else {
+        // Production: use redirect flow
+        await signInWithRedirect(auth, googleProvider);
+      }
     } catch (err) {
       console.error('Sign-in error:', err);
-      // If popup was blocked by browser, automatically try redirect fallback
-      if (err.code === 'auth/popup-blocked') {
-        console.log('Popup blocked by browser, falling back to redirect...');
+      // If popup failed (localhost), fall back to redirect
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+        console.log('Popup failed, falling back to redirect...');
         try {
           await signInWithRedirect(auth, googleProvider);
           return;
