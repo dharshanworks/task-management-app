@@ -5,11 +5,38 @@
   gap: var(--space-3);
   cursor: grab;
   animation: scaleIn var(--transition-fast) ease-out;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.task-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.task-card:hover::after {
+  opacity: 1;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(99, 102, 241, 0.08);
 }
 
 .task-card:active {
   cursor: grabbing;
   opacity: 0.8;
+  transform: scale(0.98);
 }
 
 /* Header */
@@ -60,7 +87,7 @@
   justify-content: space-between;
   gap: var(--space-2);
   padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .task-card-date {
@@ -73,20 +100,30 @@
 
 .task-card-date-overdue {
   color: var(--color-danger);
+  font-weight: 600;
+  animation: pulse 2s infinite;
 }
 
 .task-card-status-select {
-  padding: 2px var(--space-2);
+  padding: 3px var(--space-3);
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
+  font-weight: 500;
   color: var(--color-text-secondary);
   background: var(--color-bg-input);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   cursor: pointer;
   outline: none;
+  transition: all var(--transition-fast);
+}
+
+.task-card-status-select:hover {
+  border-color: var(--color-border-hover);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .task-card-status-select:focus {
   border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 2px var(--color-accent-subtle);
 }

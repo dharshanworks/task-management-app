@@ -14,6 +14,11 @@
   padding: var(--space-3) var(--space-6);
   margin: var(--space-3) var(--space-3) 0;
   border-radius: var(--radius-xl) !important;
+  background: rgba(18, 18, 26, 0.85) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .app-header-left {
@@ -26,15 +31,27 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  transition: transform var(--transition-fast);
+}
+
+.app-logo:hover {
+  transform: scale(1.03);
 }
 
 .app-logo-text {
   font-size: var(--font-size-xl);
   font-weight: 800;
-  background: linear-gradient(135deg, var(--color-accent), #a855f7);
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .app-header-right {
@@ -47,6 +64,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all var(--transition-fast);
+}
+
+.app-user-info:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .app-avatar {
@@ -54,17 +80,19 @@
   height: 32px;
   border-radius: var(--radius-full);
   object-fit: cover;
-  border: 2px solid var(--color-border);
+  border: 2px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.2);
 }
 
 .app-avatar-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-accent-subtle);
-  color: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent), #a855f7);
+  color: white;
   font-weight: 700;
   font-size: var(--font-size-sm);
+  border: none;
 }
 
 .app-user-name {
@@ -75,8 +103,8 @@
 
 .app-main {
   flex: 1;
-  padding: var(--space-6) var(--space-6) var(--space-12);
-  max-width: 1400px;
+  padding: var(--space-8) var(--space-6) var(--space-12);
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
 }
