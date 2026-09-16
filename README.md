@@ -2,6 +2,8 @@
 
 A modern, full-stack task management application with Google authentication, Kanban board, and AI-powered task improvement suggestions.
 
+🌐 **Live Production App**: [https://task-management-app-production-b7ee.up.railway.app](https://task-management-app-production-b7ee.up.railway.app)
+
 ## ✨ Features
 
 - **🔒 Google Sign-In** — Secure authentication via Firebase
@@ -22,7 +24,7 @@ A modern, full-stack task management application with Google authentication, Kan
 | Backend | Express.js (Node.js) |
 | Authentication | Firebase Authentication (Google Sign-In) |
 | Database | Cloud Firestore |
-| AI Assistant | Google Gemini API (gemini-2.0-flash) |
+| AI Assistant | Google Gemini API (gemini-3.6-flash) |
 | Deployment | Railway |
 
 ## 📁 Project Structure
