@@ -1,0 +1,24 @@
+{
+  "name": "task-management-backend",
+  "version": "1.0.0",
+  "description": "Express.js backend API for Task Management App",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --forceExit --detectOpenHandles"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "firebase-admin": "^13.0.2",
+    "helmet": "^8.0.0",
+    "express-rate-limit": "^7.4.1",
+    "@google/generative-ai": "^0.21.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7"
+  }
+}
